@@ -61,7 +61,8 @@ df -h .
 ### Step 1: System update
 
 ```bash
-sudo apt update && sudo apt upgrade -y
+# Refresh package metadata only. Do not run a system-wide upgrade on a shared server.
+sudo apt update
 ```
 
 ### Step 2: Install dependencies
