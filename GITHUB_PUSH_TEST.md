@@ -1,5 +1,7 @@
 # GitHub push test from the Ubuntu server
 
+The GitHub repository used here is **`Deven1305/btc`**. `btc-intel` is only a project/local-folder name used in some older instructions; it is not the GitHub repository name.
+
 The repository may be public for easy cloning, but GitHub still requires authentication for every push. You do not need to enter your GitHub password, and you should never put a password in a command. Use a Personal Access Token (PAT) for this one-time HTTPS test, or use SSH for unattended 24/7 pushing.
 
 ## What the two screenshots show
