@@ -33,6 +33,22 @@ ssh-keygen -t ed25519 \\
 
 For unattended pushing, press Enter twice for an empty passphrase. A passphrase is safer for manual use but requires an SSH agent after reboot.
 
+### If the multiline command gives `Too many arguments`
+
+Use this single line instead. It avoids Bash line-continuation problems when copying from a document:
+
+```bash
+mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh" && ssh-keygen -t ed25519 -C "btc-intel-ubuntu-server" -f "$HOME/.ssh/id_ed25519_btcintel"
+```
+
+The command must contain ordinary single hyphens (`-C` and `-f`). Do not paste doubled backslashes (`\\`) at the end of lines. If you want to check whether a key already exists first:
+
+```bash
+ls -la "$HOME/.ssh"
+```
+
+Only continue with `ssh-keygen` if `id_ed25519_btcintel` does not already exist.
+
 ## 3. Add the public key on GitHub
 
 ```bash
@@ -47,7 +63,7 @@ Key type: Authentication Key
 Key: paste the complete output from the cat command
 ```
 
-Paste only the `.pub` output. Never paste `~/.ssh/id_ed25519_btcintel`, which is private.
+Paste only the `.pub` output into your GitHub account's **SSH and GPG keys** page. This public key is not pushed into the Git repository. Never paste `~/.ssh/id_ed25519_btcintel`, which is private.
 
 ## 4. Configure SSH
 
@@ -115,3 +131,5 @@ tail -30 logs/sync_daemon.log
 ## Revocation and authentication notes
 
 From any laptop, delete `BTC-Intel Ubuntu Server` under GitHub **Settings -> SSH and GPG keys**. Future server authentication will then fail. A public repository can be cloned without authentication, but pushing still requires an account with write permission. Git commit name/email are author metadata, not passwords.
+
+Making the repository private is not required for SSH safety. The SSH key is attached to your GitHub account, not to the repository contents. Keeping the repository private is still preferable if the data or output files should not be publicly downloadable.
