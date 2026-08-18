@@ -1,0 +1,21 @@
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# Outputs and logs (runtime generated)
+output/
+logs/
+*.log
+*.lock
+*.tmp
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
