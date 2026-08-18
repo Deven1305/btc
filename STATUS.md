@@ -1,7 +1,7 @@
 # BTC-Intel Server Backfill — Live Status Report
 
-> **Last Updated:** `2026-08-18 09:46:30 AM IST` (`2026-08-18 04:16:30 UTC`)  
-> **Server Disk Space:** `11.01 GB free out of 502.0 GB (97.8% used)`
+> **Last Updated:** `2026-08-18 10:38:08 AM IST` (`2026-08-18 05:08:08 UTC`)  
+> **Server Disk Space:** `10.9 GB free out of 502.0 GB (97.8% used)`
 
 ---
 
@@ -9,9 +9,9 @@
 
 | Dataset Queue | Queue Total | Fetched by Server (Reverse) | % Completed | File Size | Last File Update |
 |---|---:|---:|---:|---:|---|
-| **Kaggle (BABD/BASD)** | **354,656** | **0** | **0.00%** | 0.0 MB | N/A |
+| **Kaggle (BABD/BASD)** | **1,970,747** | **0** | **0.00%** | 0.0 MB | N/A |
 | **Elliptic++** | **265,337** | **0** | **0.00%** | 0.0 MB | N/A |
-| **Total Combined** | **619,993** | **0** | **0.00%** | 0.0 MB | — |
+| **Total Combined** | **2,236,084** | **0** | **0.00%** | 0.0 MB | — |
 
 ---
 
@@ -24,7 +24,7 @@
 ## 3. Kaggle Reverse Batch Details
 
 - **Output CSV:** [`output/backfill_kaggle_reverse.csv`](output/backfill_kaggle_reverse.csv)
-- **Rows Written:** `0` / `354,656`
+- **Rows Written:** `0` / `1,970,747`
 - **Class Breakdown:** `{}`
 - **Data Completeness:** `{}`
 - **Top Active Endpoints:** `{}`

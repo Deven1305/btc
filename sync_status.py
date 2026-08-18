@@ -245,27 +245,45 @@ def main():
     if "--push" in sys.argv or "-p" in sys.argv:
         print("[Git] Staging STATUS.md and output CSVs...")
         try:
-            # Stage STATUS.md
-            subprocess.run(["git", "add", "STATUS.md"], cwd=SCRIPT_DIR, check=True)
-            # Stage output CSVs if they exist
+            # 1. Clean stale git lock if any
+            git_lock = SCRIPT_DIR / ".git" / "index.lock"
+            if git_lock.exists():
+                try:
+                    git_lock.unlink(missing_ok=True)
+                except Exception:
+                    pass
+
+            # 2. Stage STATUS.md and output CSVs
+            subprocess.run(["git", "add", "STATUS.md"], cwd=SCRIPT_DIR, check=False)
             if KAGGLE_OUT.exists():
-                subprocess.run(["git", "add", "-f", "output/backfill_kaggle_reverse.csv"], cwd=SCRIPT_DIR, check=False)
+                subprocess.run(["git", "add", "output/backfill_kaggle_reverse.csv"], cwd=SCRIPT_DIR, check=False)
             if ELLIPTIC_OUT.exists():
-                subprocess.run(["git", "add", "-f", "output/backfill_elliptic_reverse.csv"], cwd=SCRIPT_DIR, check=False)
-            
-            # Check if there are changes to commit
+                subprocess.run(["git", "add", "output/backfill_elliptic_reverse.csv"], cwd=SCRIPT_DIR, check=False)
+
+            # 3. Check if there are changes to commit
             diff_check = subprocess.run(["git", "diff", "--staged", "--quiet"], cwd=SCRIPT_DIR)
-            if diff_check.returncode != 0:
+            has_changes = (diff_check.returncode != 0)
+
+            if has_changes:
                 msg = f"Auto-Sync update: {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"
-                subprocess.run(["git", "commit", "-m", msg], cwd=SCRIPT_DIR, check=True)
-                print("[Git] Pushing to origin main...")
-                push_res = subprocess.run(["git", "push", "origin", "main"], cwd=SCRIPT_DIR, capture_output=True, text=True)
-                if push_res.returncode == 0:
-                    print("[Git] Push SUCCESSFUL!")
-                else:
-                    print(f"[Git] Push FAILED: {push_res.stderr}")
+                subprocess.run(["git", "commit", "-m", msg], cwd=SCRIPT_DIR, check=False)
+
+            # 4. Pull --rebase to prevent conflicts with any remote changes
+            print("[Git] Syncing with remote origin/main...")
+            subprocess.run(["git", "pull", "--rebase", "-X", "theirs", "origin", "main"], cwd=SCRIPT_DIR, capture_output=True, text=True)
+
+            # 5. Push to origin main (with automatic retry)
+            print("[Git] Pushing to origin main...")
+            push_res = subprocess.run(["git", "push", "origin", "main"], cwd=SCRIPT_DIR, capture_output=True, text=True)
+            if push_res.returncode == 0:
+                print("[Git] Push SUCCESSFUL!")
             else:
-                print("[Git] No new changes to commit.")
+                print(f"[Git] Push retry with force-with-lease: {push_res.stderr.strip()}")
+                retry = subprocess.run(["git", "push", "--force-with-lease", "origin", "main"], cwd=SCRIPT_DIR, capture_output=True, text=True)
+                if retry.returncode == 0:
+                    print("[Git] Push SUCCESSFUL after lease sync!")
+                else:
+                    print(f"[Git] Push status: {retry.stderr.strip()}")
         except Exception as e:
             print(f"[Git] Error during git sync: {e}")
 

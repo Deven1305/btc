@@ -2,40 +2,49 @@
 
 **24/7 reverse-direction Bitcoin address feature extraction for the BTC-Intel research dataset.**
 
-This folder runs on your college Ubuntu server. It extracts all **53 on-chain features** for ~468K Bitcoin addresses from 12 free public API endpoints, working the queue **backwards** while your local machine works forwards. They meet in the middle — no duplicates.
+This folder runs on your college Ubuntu server. It extracts all **53 on-chain features** for **~2.23 Million Bitcoin addresses** (1.97M Kaggle BABD/BASD + 265K Elliptic++) from 12 free public API endpoints, working the queue **backwards** while your local machine works forwards. They meet in the middle — no duplicates.
+
+---
+
+## ⚡ One-Line Server Specs & Storage Check (Instant Copy-Paste)
+
+Paste this single command into the Ubuntu terminal to instantly inspect all hardware capacity (CPU, RAM, GPU, Disks, OS) safely and without affecting any running tasks:
+
+```bash
+echo "=== 🖥️ HOST & OS ===" && hostnamectl | grep -E "Static hostname|Operating System|Kernel|Architecture" && \
+echo -e "\n=== 🧠 CPU ===" && lscpu | grep -E "Model name|Socket|Core|Thread|CPU max MHz|Virtualization" && \
+echo -e "\n=== 💾 RAM / MEMORY ===" && free -h && \
+echo -e "\n=== 💽 DISK STORAGE ===" && df -h -x tmpfs -x devtmpfs -x squashfs && \
+echo -e "\n=== 🎮 GPU ===" && (nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader 2>/dev/null || lspci | grep -i -E "vga|3d|display") && \
+echo -e "\n=== ⏱️ UPTIME & USER ===" && echo "User: $(whoami) | Uptime: $(uptime -p)"
+```
 
 ---
 
 ## What this does
 
-| Queue | Total | Your local (forward) | Server (reverse) | Remaining |
-|---|---:|---:|---:|---:|
-| Kaggle BABD/BASD | 354,656 | 147,370 done | starts from end | ~207K |
-| Elliptic++ | 265,337 | 4,722 done | starts from end | ~261K |
+| Queue | Total Addresses | Breakdown | Server Direction |
+|---|---:|---|---|
+| **Kaggle (BABD/BASD)** | **1,970,747** | 436K labelled seeds + 1.01M graph neighbours + 411K ledger | **Reverse (from row 1,970,747 down to 1)** |
+| **Elliptic++** | **265,337** | 265K actor addresses | **Reverse (from row 265,337 down to 1)** |
 
-**Estimated time on server:** ~29 hours (Kaggle) + ~36 hours (Elliptic++) running in parallel.  
 Both batches run simultaneously in separate `tmux` sessions.
 
 ---
 
 ## Server Setup — Step by Step
 
-### Step 0: Check your environment
+### Step 0: Check your environment & identity
 
 ```bash
-# Who am I? What machine is this?
+# Check who you are and where you are:
 whoami
 hostname
 pwd
 
-# Check Ubuntu version
+# Check Ubuntu version & disk:
 lsb_release -a
-
-# Check available disk space (need ~2GB for queues + outputs)
 df -h .
-
-# Check if Python 3 is installed
-python3 --version
 ```
 
 ### Step 1: System update
