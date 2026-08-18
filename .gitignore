@@ -3,12 +3,13 @@ venv/
 env/
 .venv/
 
-# Outputs and logs (runtime generated)
-output/
+# Temporary and log files
 logs/
 *.log
 *.lock
 *.tmp
+output/*.lock
+output/*.tmp
 
 # Python artifacts
 __pycache__/

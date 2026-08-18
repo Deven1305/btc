@@ -1,0 +1,6 @@
+# Force LF (Unix) line endings for shell scripts and python scripts
+*.sh text eol=lf
+*.py text eol=lf
+*.parquet binary
+*.csv text
+*.md text

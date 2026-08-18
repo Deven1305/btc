@@ -3,6 +3,7 @@
 # run_kaggle_reverse.sh — Run Kaggle BABD/BASD reverse backfill in a loop
 #
 # Designed for 24/7 server operation. Auto-restarts on crash with a 30s cooldown.
+# Runs with 'nice -n 10' for polite CPU scheduling so it never impacts other tasks.
 # Run inside tmux so it survives SSH disconnection.
 #
 # Usage:
@@ -19,6 +20,11 @@ mkdir -p output logs
 
 LOG="logs/kaggle_reverse.log"
 
+# Auto-activate venv if present
+if [ -f "venv/bin/activate" ]; then
+    source venv/bin/activate
+fi
+
 echo "========================================" | tee -a "$LOG"
 echo "[$(date -u '+%Y-%m-%d %H:%M:%S UTC')] Kaggle reverse backfill STARTING" | tee -a "$LOG"
 echo "Host: $(hostname), User: $(whoami), PID: $$" | tee -a "$LOG"
@@ -28,7 +34,8 @@ while true; do
     echo "" | tee -a "$LOG"
     echo "[$(date -u '+%Y-%m-%d %H:%M:%S UTC')] === RUN STARTING ===" | tee -a "$LOG"
 
-    python3 backfill_server.py \
+    # Runs with polite CPU priority (nice -n 10) to never disturb other server users
+    nice -n 10 python3 backfill_server.py \
         --queue queues/queue_kaggle_esplora.parquet \
         --out output/backfill_kaggle_reverse.csv \
         --reverse \
