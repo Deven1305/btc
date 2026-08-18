@@ -1,5 +1,7 @@
 # BTC-Intel Server Backfill
 
+For the exact Ubuntu checks, GitHub authentication test, and copy-paste push commands, see [GITHUB_PUSH_TEST.md](GITHUB_PUSH_TEST.md).
+
 ## Queue files: CSV and Parquet
 
 Both formats are supplied. Parquet is faster and smaller; CSV is the portable fallback if `pyarrow` cannot be installed.
