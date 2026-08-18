@@ -1,6 +1,6 @@
-# Remote Monitoring & 11:00 PM Auto-Push Guide
+# Remote Monitoring & Automatic Six-Hour Push Guide
 
-This guide explains how to monitor the 24/7 server backfill **remotely from home** without having direct remote SSH access to the college server room, and how the automated **11:00 PM GitHub sync** works.
+This guide explains how to monitor the 24/7 server backfill **remotely from home** without having direct remote SSH access to the college server room. The daemon pushes immediately at startup and then every six hours by default.
 
 ---
 
@@ -28,7 +28,7 @@ You can check progress at any time (on your laptop, phone, or tablet) simply by 
 
 ## 2. Automated Git Sync Options (Choose One)
 
-We provide two easy ways to automate the 11:00 PM (23:00) push to GitHub:
+We provide two easy ways to automate the six-hour GitHub push:
 
 ### Option A: `tmux` Auto-Sync Daemon (Recommended — Easiest, No `sudo` Needed)
 
@@ -49,8 +49,8 @@ tmux list-sessions
 
 **What this does:**
 - Immediately syncs and pushes upon startup so you can verify it works.
-- Automatically triggers a push every day at **11:00 PM (23:00 IST)**.
-- Also pushes intermediate updates every 4 hours.
+- Automatically triggers a push every six hours.
+- Override the interval with `SYNC_INTERVAL_HOURS`, if needed.
 - If it crashes, it automatically retries after 60 seconds.
 
 ---
@@ -63,8 +63,8 @@ If you prefer standard Linux `cron`:
 # Open crontab editor
 crontab -e
 
-# Add this line at the bottom to run every night at 11:00 PM (23:00):
-0 23 * * * /bin/bash -c "cd $HOME/btc-intel-backfill/btc && ./auto_git_sync.sh" >> $HOME/btc-intel-backfill/btc/logs/cron.log 2>&1
+# Add this line at the bottom to run at minute 0 every 6 hours:
+0 */6 * * * /bin/bash -c "cd $HOME/btc-intel-backfill/btc/server_backfill && ./auto_git_sync.sh" >> $HOME/btc-intel-backfill/btc/server_backfill/logs/cron.log 2>&1
 
 # Save and exit (in nano: Ctrl+O, Enter, Ctrl+X)
 ```
@@ -78,7 +78,7 @@ To test the cron script immediately:
 
 ## 3. One-Time Setup: Non-Interactive Git Push on Server
 
-To allow `git push` to run automatically at 11 PM without prompting for your GitHub password:
+To allow `git push` to run automatically every six hours without prompting for your GitHub password:
 
 ### Method 1: Personal Access Token (PAT) with Credential Helper (Simplest)
 
@@ -131,7 +131,7 @@ tmux list-sessions
 You should see 3 active sessions:
 - `kaggle` (fetching Kaggle reverse batch)
 - `elliptic` (fetching Elliptic++ reverse batch)
-- `sync` (handling auto-push at 11 PM)
+- `sync` (handling the six-hour auto-push)
 
 ### 2. Check live progress:
 ```bash
@@ -205,4 +205,4 @@ tmux new-session -d -s sync 'source venv/bin/activate && ./run_sync_daemon.sh'
 # 5. Confirm all 3 are running
 tmux list-sessions
 ```
-You can now safely log out of the server and go home. Check your GitHub repo at **11:00 PM** to see the day's progress!
+You can now safely log out of the server and go home. Check your GitHub repo after the next six-hour sync window to see progress.

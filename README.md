@@ -167,7 +167,7 @@ tmux new-session -d -s kaggle 'source venv/bin/activate && ./run_kaggle_reverse.
 # Start Elliptic++ reverse backfill in a separate tmux session
 tmux new-session -d -s elliptic 'source venv/bin/activate && ./run_elliptic_reverse.sh'
 
-# Start 11:00 PM Auto-Sync Daemon to push progress to GitHub automatically
+# Start the six-hour Auto-Sync Daemon to push progress to GitHub automatically
 tmux new-session -d -s sync 'source venv/bin/activate && ./run_sync_daemon.sh'
 
 # Verify all 3 are running
