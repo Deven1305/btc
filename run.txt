@@ -1,0 +1,29 @@
+Yes, those commands start the automatic GitHub sync daemon. Use this safer version so you do not create a duplicate sync session:
+
+cd ~/Desktop/wallet_add/btc/server_backfill
+source venv/bin/activate
+chmod +x run_sync_daemon.sh auto_git_sync.sh
+
+if tmux has-session -t sync 2>/dev/null; then
+    echo "sync is already running"
+else
+    tmux new-session -d -s sync './run_sync_daemon.sh'
+fi
+
+tmux list-sessions
+
+
+You should see:
+kaggle
+elliptic
+sync
+To monitor it from another terminal without interrupting anything:
+
+
+cd ~/Desktop/wallet_add/btc/server_backfill
+tmux capture-pane -pt sync:0 -S -30
+tail -30 logs/sync_daemon.log
+
+
+The daemon pushes immediately when started and then every six hours.
+chmod +x only needs to be done once. tmux keeps the process running after you close the terminal, but it will not automatically restart after a full server reboot unless you configure a system service or manually start it again.
