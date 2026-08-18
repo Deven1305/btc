@@ -140,7 +140,10 @@ tmux new-session -d -s kaggle 'source venv/bin/activate && ./run_kaggle_reverse.
 # Start Elliptic++ reverse backfill in a separate tmux session
 tmux new-session -d -s elliptic 'source venv/bin/activate && ./run_elliptic_reverse.sh'
 
-# Verify both are running
+# Start 11:00 PM Auto-Sync Daemon to push progress to GitHub automatically
+tmux new-session -d -s sync 'source venv/bin/activate && ./run_sync_daemon.sh'
+
+# Verify all 3 are running
 tmux list-sessions
 ```
 
@@ -148,6 +151,10 @@ You should see:
 ```
 elliptic: 1 windows ...
 kaggle: 1 windows ...
+sync: 1 windows ...
+```
+
+> 📖 **Remote Monitoring Guide:** See [REMOTE_MONITORING_AND_AUTO_PUSH.md](REMOTE_MONITORING_AND_AUTO_PUSH.md) for how to check progress from home and view the live `STATUS.md` on GitHub.
 ```
 
 ### Watch live progress
