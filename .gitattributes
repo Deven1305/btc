@@ -4,3 +4,6 @@
 *.parquet binary
 *.csv text
 *.md text
+
+# The exhaustive Kaggle CSV is above GitHub's ordinary-file size limit.
+queues/kaggle_all_addresses.csv filter=lfs diff=lfs merge=lfs -text

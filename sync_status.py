@@ -29,7 +29,7 @@ OUTPUT_DIR = SCRIPT_DIR / "output"
 LOGS_DIR = SCRIPT_DIR / "logs"
 STATUS_MD = SCRIPT_DIR / "STATUS.md"
 
-KAGGLE_QUEUE = QUEUES_DIR / "queue_kaggle_esplora.parquet"
+KAGGLE_QUEUE = QUEUES_DIR / "kaggle_all_addresses.csv"
 KAGGLE_OUT = OUTPUT_DIR / "backfill_kaggle_reverse.csv"
 KAGGLE_LOG = LOGS_DIR / "kaggle_reverse.log"
 
@@ -38,11 +38,14 @@ ELLIPTIC_OUT = OUTPUT_DIR / "backfill_elliptic_reverse.csv"
 ELLIPTIC_LOG = LOGS_DIR / "elliptic_reverse.log"
 
 
-def get_queue_total(parquet_path: Path) -> int:
-    if not parquet_path.exists():
+def get_queue_total(queue_path: Path) -> int:
+    if not queue_path.exists():
         return 0
     try:
-        df = pd.read_parquet(parquet_path, columns=["address"])
+        if queue_path.suffix.lower() == ".parquet":
+            df = pd.read_parquet(queue_path, columns=["address"])
+        else:
+            df = pd.read_csv(queue_path, usecols=["address"], low_memory=False)
         return len(df)
     except Exception:
         return 0

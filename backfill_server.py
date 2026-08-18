@@ -48,6 +48,11 @@ from pathlib import Path
 
 import pandas as pd
 
+
+# Set only while this process owns an output lock.  Cleanup must never remove
+# the lock belonging to the other, parallel batch.
+ACTIVE_LOCK: Path | None = None
+
 # ─────────────────────────────────────────────────────────────────────────────
 # SCHEMA — the 53 feature columns (authoritative order)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -576,16 +581,72 @@ def fetch_one(rec, rotor, deadline_s=45.0):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# QUEUE INPUT AND LOCK SAFETY
+
+QUEUE_COLUMNS = ["address", "class", "label", "label_source", "address_type", "feature_status"]
+
+
+def load_queue(path: Path) -> pd.DataFrame:
+    """Load a canonical CSV/Parquet queue or raw kaggle_all_addresses.csv."""
+    if not path.exists():
+        raise FileNotFoundError(f"Queue file does not exist: {path}")
+    try:
+        if path.suffix.lower() == ".parquet":
+            q = pd.read_parquet(path)
+        elif path.suffix.lower() == ".csv":
+            q = pd.read_csv(path, low_memory=False, dtype={"address": "string"})
+        else:
+            raise ValueError("Queue must be a .csv or .parquet file")
+    except Exception as exc:
+        raise RuntimeError(f"Could not read queue {path}: {exc}") from exc
+
+    if "class" not in q.columns:
+        # Raw Kaggle inventory: only clean/blacklisted targets are labels; all
+        # other records deliberately remain unlabelled.
+        if not {"address", "target", "source"}.issubset(q.columns):
+            raise ValueError(f"Queue {path} has no class column and is not a supported raw Kaggle CSV")
+        target = q["target"].fillna("").astype(str).str.lower()
+        q["class"] = target.map({"clean": "white", "blacklisted": "blacklisted"}).fillna("unlabelled")
+        q["label"] = q["class"].map({"white": "LICIT", "blacklisted": "ILLICIT"}).fillna("UNKNOWN")
+        q["label_source"] = q["source"].fillna("KAGGLE_UNKNOWN").astype(str)
+        q["address_type"] = "UNKNOWN"
+        q["feature_status"] = "NOT_MEASURED"
+
+    missing = set(QUEUE_COLUMNS) - set(q.columns)
+    if missing:
+        raise ValueError(f"Queue {path} is missing required columns: {sorted(missing)}")
+    q = q[QUEUE_COLUMNS].copy()
+    q["address"] = q["address"].astype(str).str.strip()
+    q = q[q["address"].ne("")].drop_duplicates("address", keep="first")
+    if q.empty:
+        raise ValueError(f"Queue {path} has no usable addresses")
+    return q
+
+
+def _pid_alive(pid: int) -> bool:
+    """Best-effort check to prevent a second process stealing a live lock."""
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main():
+    global ACTIVE_LOCK
     ap = argparse.ArgumentParser(
         description="Server-side reverse backfill — standalone, 24/7 ready.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__)
     ap.add_argument("--queue", required=True,
-                    help="Path to queue .parquet file (e.g. queues/queue_kaggle_esplora.parquet)")
+                    help="CSV or Parquet queue (e.g. queues/kaggle_all_addresses.csv)")
     ap.add_argument("--out", required=True,
                     help="Output CSV path (e.g. output/backfill_kaggle_reverse.csv)")
     ap.add_argument("--reverse", action="store_true", default=True,
@@ -621,12 +682,16 @@ def main():
     if not args.status:
         if lock.exists():
             age = time.time() - lock.stat().st_mtime
-            if age < 1800:
-                print(f"[lock] another backfill is already running (lock {age:.0f}s old).")
-                print(f"[lock] wait for it, or delete {lock} if you are sure it died.")
+            try:
+                owner_pid = int(lock.read_text(encoding="utf-8").strip())
+            except Exception:
+                owner_pid = -1
+            if _pid_alive(owner_pid):
+                print(f"[lock] another backfill is already running (PID {owner_pid}, lock {age:.0f}s old).")
                 sys.exit(1)
             print(f"[lock] stale lock ({age/60:.0f} min old) — taking over")
         lock.write_text(str(os.getpid()), encoding="utf-8")
+        ACTIVE_LOCK = lock
 
     # ── Already done ─────────────────────────────────────────────────────
     done = set()
@@ -638,7 +703,11 @@ def main():
                 pass
 
     # ── Load queue ───────────────────────────────────────────────────────
-    q = pd.read_parquet(args.queue)
+    try:
+        q = load_queue(Path(args.queue))
+    except Exception as exc:
+        print(f"[fatal] {exc}", file=sys.stderr)
+        return 2
     miss = q[~q.address.isin(done)]
 
     print(f"[queue ] {len(q):,} total addresses in queue")
@@ -655,12 +724,10 @@ def main():
                 print(f"[stats ] by endpoint: {d['source_api'].value_counts().to_dict()}")
             except Exception:
                 pass
-        lock.unlink(missing_ok=True)
         return
 
     if miss.empty:
         print("[done  ] nothing left to fetch!")
-        lock.unlink(missing_ok=True)
         return
 
     # ── Filter non-Bitcoin addresses ─────────────────────────────────────
@@ -715,7 +782,7 @@ def main():
     signal.signal(signal.SIGTERM, _sig)
 
     # ── Main loop ────────────────────────────────────────────────────────
-    t0, wrote, tally = time.time(), 0, {}
+    t0, wrote, failed, tally = time.time(), 0, 0, {}
     for i in range(0, len(recs), args.chunk):
         if shutdown.is_set():
             break
@@ -723,6 +790,7 @@ def main():
         with ThreadPoolExecutor(max_workers=args.workers) as ex:
             rows = [r for r in ex.map(
                 lambda r: fetch_one(r, rotor, args.deadline), batch) if r]
+        failed += len(batch) - len(rows)
         for r in rows:
             w.writerow(r)
             k = r.get("data_completeness", "?")
@@ -735,7 +803,7 @@ def main():
         eta_min = remaining / max(rate, 1e-9) / 60
         eta_hr = eta_min / 60
         print(f"  [{wrote:>6,}/{len(recs):,}] {el/60:5.1f}min "
-              f"({rate:.2f}/s) got {len(rows)}/{len(batch)} "
+              f"({rate:.2f}/s) got {len(rows)}/{len(batch)} failed {failed} "
               f"| ETA {eta_hr:.1f}h | {tally}")
         print(f"        {rotor.report()}")
 
@@ -745,15 +813,22 @@ def main():
           f"({wrote/max(total,1e-9):.2f}/s)")
     print(f"[done  ] completeness: {tally}")
     print(f"[done  ] wrote -> {out}")
+    if shutdown.is_set():
+        print("[retry ] interrupted before all remaining addresses were attempted")
+        return 130
+    if failed:
+        print(f"[retry ] {failed} address(es) failed this pass; exiting non-zero so the wrapper retries them")
+        return 2
+    return 0
 
 
 if __name__ == "__main__":
     try:
-        main()
+        raise SystemExit(main())
     finally:
-        # Never leave a stale lock behind on crash/Ctrl-C
-        for f in Path(".").glob("output/*.csv.lock"):
+        # Never interfere with the other parallel batch's lock.
+        if ACTIVE_LOCK is not None:
             try:
-                f.unlink(missing_ok=True)
+                ACTIVE_LOCK.unlink(missing_ok=True)
             except Exception:
                 pass

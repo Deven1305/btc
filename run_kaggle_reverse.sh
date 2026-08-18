@@ -36,7 +36,7 @@ while true; do
 
     # Runs with polite CPU priority (nice -n 10) to never disturb other server users
     nice -n 10 python3 backfill_server.py \
-        --queue queues/queue_kaggle_esplora.parquet \
+        --queue queues/kaggle_all_addresses.csv \
         --out output/backfill_kaggle_reverse.csv \
         --reverse \
         --workers 4 \

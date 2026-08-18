@@ -1,5 +1,16 @@
 # BTC-Intel Server Backfill
 
+## Queue files: CSV and Parquet
+
+Both formats are supplied. Parquet is faster and smaller; CSV is the portable fallback if `pyarrow` cannot be installed.
+
+| Dataset | CSV (default/fallback) | Parquet (faster) | Rows |
+|---|---|---|---:|
+| Kaggle | `queues/kaggle_all_addresses.csv` | `queues/queue_kaggle_esplora.parquet` | 1,970,747 |
+| Elliptic++ | `queues/queue_elliptic_pp.csv` | `queues/queue_elliptic_pp.parquet` | 265,337 |
+
+The Kaggle wrapper uses the exhaustive CSV and processes it from its final row to its first row. It maps `clean` to `white`, `blacklisted` to `blacklisted`, and all other records to `unlabelled`. To use the faster Parquet file instead, replace its queue argument with `queues/queue_kaggle_esplora.parquet`.
+
 **24/7 reverse-direction Bitcoin address feature extraction for the BTC-Intel research dataset.**
 
 This folder runs on your college Ubuntu server. It extracts all **53 on-chain features** for **~2.23 Million Bitcoin addresses** (1.97M Kaggle BABD/BASD + 265K Elliptic++) from 12 free public API endpoints, working the queue **backwards** while your local machine works forwards. They meet in the middle — no duplicates.
@@ -57,7 +68,7 @@ sudo apt update && sudo apt upgrade -y
 
 ```bash
 # Python 3 + pip (likely already installed on Ubuntu GUI)
-sudo apt install -y python3 python3-pip python3-venv git tmux
+sudo apt install -y python3 python3-pip python3-venv git git-lfs tmux
 
 # Verify
 python3 --version
@@ -81,6 +92,8 @@ cd ~/btc-intel-backfill
 ```bash
 git clone https://github.com/Deven1305/btc.git
 cd btc/server_backfill
+git lfs install
+git lfs pull
 ```
 
 ### Step 5: Set up Python virtual environment
