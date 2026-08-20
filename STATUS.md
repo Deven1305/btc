@@ -1,7 +1,7 @@
 # BTC-Intel Server Backfill — Live Status Report
 
-> **Last Updated:** `2026-08-20 05:00:39 AM IST` (`2026-08-19 23:30:39 UTC`)  
-> **Server Disk Space:** `577.55 GB free out of 1830.18 GB (64.3% used)`
+> **Last Updated:** `2026-08-20 11:01:21 AM IST` (`2026-08-20 05:31:21 UTC`)  
+> **Server Disk Space:** `577.51 GB free out of 1830.18 GB (64.3% used)`
 
 ---
 
@@ -9,9 +9,9 @@
 
 | Dataset Queue | Queue Total | Fetched by Server (Reverse) | % Completed | File Size | Last File Update |
 |---|---:|---:|---:|---:|---|
-| **Kaggle (BABD/BASD)** | **1,970,747** | **110,358** | **5.60%** | 40.49 MB | 2026-08-19 23:30:16 UTC |
-| **Elliptic++** | **265,337** | **91,124** | **34.34%** | 34.6 MB | 2026-08-19 23:29:44 UTC |
-| **Total Combined** | **2,236,084** | **201,482** | **9.01%** | 75.09 MB | — |
+| **Kaggle (BABD/BASD)** | **1,970,747** | **128,197** | **6.50%** | 47.04 MB | 2026-08-20 05:31:17 UTC |
+| **Elliptic++** | **265,337** | **104,019** | **39.20%** | 39.53 MB | 2026-08-20 05:30:08 UTC |
+| **Total Combined** | **2,236,084** | **232,216** | **10.38%** | 86.57 MB | — |
 
 ---
 
@@ -26,42 +26,42 @@
 ## 3. Kaggle Reverse Batch Details
 
 - **Output CSV:** [`output/backfill_kaggle_reverse.csv`](output/backfill_kaggle_reverse.csv)
-- **Rows Written:** `110,358` / `1,970,747`
-- **Class Breakdown:** `{'unlabelled': 110358}`
-- **Data Completeness:** `{'FULL': 91916, 'SAMPLED': 18441, 'NO_HISTORY': 1}`
-- **Top Active Endpoints:** `{'bitaroo': 17994, 'emzy': 17963, 'exan': 17847, 'trezor-btc4': 10652, 'atomic': 10526, 'mempool.space': 9213, 'trezor-btc1': 6355, 'trezor-btc2': 5901, 'trezor-btc5': 5380, 'trezor-btc3': 5176}`
+- **Rows Written:** `128,197` / `1,970,747`
+- **Class Breakdown:** `{'unlabelled': 128197}`
+- **Data Completeness:** `{'FULL': 106789, 'SAMPLED': 21407, 'NO_HISTORY': 1}`
+- **Top Active Endpoints:** `{'bitaroo': 20955, 'emzy': 20936, 'exan': 20792, 'trezor-btc4': 12407, 'atomic': 12239, 'mempool.space': 10640, 'trezor-btc1': 7327, 'trezor-btc2': 6760, 'trezor-btc5': 6340, 'trezor-btc3': 6038}`
 - **Latest Addresses Fetched:**
-  - `3NzYjk13iKZt1nfuCtRaX3tUqwKFpCMXC6`
-  - `39eE7bqhqmKg9pNszM9ziFmcLRx56vzBHh`
-  - `35ZQ3xaqVmL7pEfw6EDiMkAesBqi4rEWSi`
+  - `1C217nMRtgbp35esyt4pKmojL42fGwmKV5`
+  - `16SzpHCUjKXtogH9rTKbFGudxtaUh7ZyCB`
+  - `1Lm4GCMwKHHjyjYcVJXvMaxcThY5FiwkGi`
 
 ### Latest Log Snippet (Kaggle)
-> `trezor-btc1:6311ok/1920f  trezor-btc2:5856ok/2528f(benched)  trezor-btc3:5113ok/2371f(benched)  trezor-btc4:10572ok/1389f  trezor-btc5:5312ok/2099f  blockchain.info:46ok/448f(benched)  blockstream:3304ok/360f(benched)  mempool.space:9140ok/277f  emzy:17796ok/14f  bitaroo:17828ok/14f  exan:17682ok/28f  atomic:10448ok/1090f`
-> `[109,458/1,970,747] 2314.3min (0.79/s) got 50/50 failed 42 | ETA 655.9h | {'FULL': 91169, 'SAMPLED': 18288, 'NO_HISTORY': 1}`
-> `trezor-btc1:6313ok/1921f(benched)  trezor-btc2:5856ok/2529f(benched)  trezor-btc3:5115ok/2372f(benched)  trezor-btc4:10576ok/1390f(benched)  trezor-btc5:5313ok/2100f(benched)  blockchain.info:46ok/448f(benched)  blockstream:3304ok/360f(benched)  mempool.space:9145ok/278f(benched)  emzy:17805ok/14f  bitaroo:17837ok/14f  exan:17691ok/28f  atomic:10457ok/1090f`
-> `[109,508/1,970,747] 2315.9min (0.79/s) got 50/50 failed 42 | ETA 656.0h | {'FULL': 91210, 'SAMPLED': 18297, 'NO_HISTORY': 1}`
-> `trezor-btc1:6313ok/1921f(benched)  trezor-btc2:5859ok/2530f  trezor-btc3:5115ok/2372f(benched)  trezor-btc4:10578ok/1391f  trezor-btc5:5313ok/2100f(benched)  blockchain.info:47ok/449f(benched)  blockstream:3304ok/360f(benched)  mempool.space:9145ok/278f(benched)  emzy:17816ok/14f  bitaroo:17848ok/14f  exan:17702ok/28f  atomic:10468ok/1090f`
+> `trezor-btc1:7287ok/2228f  trezor-btc2:6694ok/2918f  trezor-btc3:6011ok/2749f  trezor-btc4:12318ok/1607f(benched)  trezor-btc5:6268ok/2443f(benched)  blockchain.info:52ok/519f(benched)  blockstream:3711ok/420f(benched)  mempool.space:10584ok/313f  emzy:20761ok/15f  bitaroo:20781ok/16f  exan:20621ok/29f  atomic:12160ok/1269f`
+> `[127,298/1,970,747] 2673.0min (0.79/s) got 50/50 failed 52 | ETA 645.1h | {'FULL': 106047, 'SAMPLED': 21250, 'NO_HISTORY': 1}`
+> `trezor-btc1:7293ok/2231f  trezor-btc2:6698ok/2923f(benched)  trezor-btc3:6012ok/2753f(benched)  trezor-btc4:12318ok/1608f(benched)  trezor-btc5:6272ok/2444f  blockchain.info:52ok/519f(benched)  blockstream:3711ok/420f(benched)  mempool.space:10593ok/313f  emzy:20770ok/15f  bitaroo:20789ok/16f  exan:20629ok/29f  atomic:12161ok/1270f`
+> `[127,348/1,970,747] 2673.7min (0.79/s) got 50/50 failed 52 | ETA 645.0h | {'FULL': 106088, 'SAMPLED': 21259, 'NO_HISTORY': 1}`
+> `trezor-btc1:7293ok/2232f(benched)  trezor-btc2:6704ok/2924f  trezor-btc3:6012ok/2754f(benched)  trezor-btc4:12324ok/1608f  trezor-btc5:6278ok/2445f  blockchain.info:52ok/519f(benched)  blockstream:3711ok/420f(benched)  mempool.space:10599ok/313f  emzy:20776ok/15f  bitaroo:20796ok/16f  exan:20636ok/29f  atomic:12167ok/1271f(benched)`
 
 ---
 
 ## 4. Elliptic++ Reverse Batch Details
 
 - **Output CSV:** [`output/backfill_elliptic_reverse.csv`](output/backfill_elliptic_reverse.csv)
-- **Rows Written:** `91,124` / `265,337`
-- **Class Breakdown:** `{'white': 76866, 'blacklisted': 14258}`
-- **Data Completeness:** `{'FULL': 62136, 'SAMPLED': 28988}`
-- **Top Active Endpoints:** `{'bitaroo': 15068, 'emzy': 14907, 'exan': 14900, 'trezor-btc4': 8725, 'atomic': 8689, 'mempool.space': 8255, 'trezor-btc1': 4921, 'trezor-btc2': 4872, 'trezor-btc5': 4131, 'trezor-btc3': 4108}`
+- **Rows Written:** `104,019` / `265,337`
+- **Class Breakdown:** `{'white': 89761, 'blacklisted': 14258}`
+- **Data Completeness:** `{'FULL': 70482, 'SAMPLED': 33537}`
+- **Top Active Endpoints:** `{'bitaroo': 17198, 'emzy': 17046, 'exan': 17027, 'atomic': 9912, 'trezor-btc4': 9895, 'mempool.space': 9431, 'trezor-btc1': 5622, 'trezor-btc2': 5539, 'trezor-btc5': 4775, 'trezor-btc3': 4723}`
 - **Latest Addresses Fetched:**
-  - `1LZSuAkLhZnXoi7MARHtGfEjXXnhbfcvsw`
-  - `1LZSimdNEqYJK8iiZwCbefHk1gCT3XTVy6`
-  - `1LZSU52b4hbmpDXpLxvkxrncVmxTVobaQx`
+  - `1KBdrPofKGSpiGF47tEtMc25g9mXsbBjbT`
+  - `1KBdWWwucgGrAm5pkG3Vx6hqusZ5Grrymn`
+  - `1KBd6iKeuGDExcxEgzaMVTE33tCUArAni9`
 
 ### Latest Log Snippet (Elliptic++)
-> `trezor-btc1:4869ok/1732f(benched)  trezor-btc2:4840ok/1979f(benched)  trezor-btc3:4068ok/1942f(benched)  trezor-btc4:8643ok/1380f  trezor-btc5:4103ok/1675f(benched)  blockchain.info:39ok/445f(benched)  blockstream:2509ok/359f(benched)  mempool.space:8148ok/250f  emzy:14733ok/28f  bitaroo:14894ok/21f  exan:14726ok/33f  atomic:8602ok/1075f`
-> `[90,224/265,337] 2306.8min (0.65/s) got 50/50 failed 26 | ETA 74.6h | {'SAMPLED': 28680, 'FULL': 61544}`
-> `trezor-btc1:4869ok/1732f(benched)  trezor-btc2:4840ok/1979f(benched)  trezor-btc3:4068ok/1942f(benched)  trezor-btc4:8648ok/1381f(benched)  trezor-btc5:4103ok/1675f(benched)  blockchain.info:39ok/445f(benched)  blockstream:2509ok/360f(benched)  mempool.space:8157ok/250f  emzy:14742ok/28f  bitaroo:14903ok/21f  exan:14735ok/33f  atomic:8611ok/1075f`
-> `[90,274/265,337] 2308.8min (0.65/s) got 50/50 failed 26 | ETA 74.6h | {'SAMPLED': 28699, 'FULL': 61575}`
-> `trezor-btc1:4869ok/1732f(benched)  trezor-btc2:4840ok/1979f(benched)  trezor-btc3:4068ok/1942f(benched)  trezor-btc4:8656ok/1381f  trezor-btc5:4103ok/1675f(benched)  blockchain.info:39ok/445f  blockstream:2509ok/360f(benched)  mempool.space:8163ok/251f(benched)  emzy:14753ok/28f  bitaroo:14914ok/21f  exan:14746ok/33f  atomic:8614ok/1077f`
+> `trezor-btc1:5593ok/2009f  trezor-btc2:5487ok/2283f  trezor-btc3:4686ok/2273f(benched)  trezor-btc4:9862ok/1619f  trezor-btc5:4751ok/1941f  blockchain.info:50ok/516f(benched)  blockstream:2801ok/421f(benched)  mempool.space:9384ok/284f(benched)  emzy:16950ok/32f  bitaroo:17102ok/25f  exan:16931ok/36f  atomic:9872ok/1254f`
+> `[103,519/265,337] 2678.6min (0.64/s) got 50/50 failed 31 | ETA 69.8h | {'SAMPLED': 33370, 'FULL': 70149}`
+> `trezor-btc1:5593ok/2011f(benched)  trezor-btc2:5492ok/2287f  trezor-btc3:4686ok/2273f(benched)  trezor-btc4:9864ok/1620f  trezor-btc5:4759ok/1942f  blockchain.info:50ok/517f(benched)  blockstream:2801ok/422f(benched)  mempool.space:9384ok/284f(benched)  emzy:16959ok/32f  bitaroo:17111ok/25f  exan:16940ok/36f  atomic:9880ok/1255f(benched)`
+> `[103,569/265,337] 2679.8min (0.64/s) got 50/50 failed 31 | ETA 69.7h | {'SAMPLED': 33385, 'FULL': 70184}`
+> `trezor-btc1:5593ok/2014f(benched)  trezor-btc2:5502ok/2289f  trezor-btc3:4686ok/2273f  trezor-btc4:9864ok/1622f(benched)  trezor-btc5:4761ok/1944f(benched)  blockchain.info:50ok/517f(benched)  blockstream:2801ok/422f(benched)  mempool.space:9389ok/284f  emzy:16970ok/32f  bitaroo:17122ok/25f  exan:16951ok/36f  atomic:9880ok/1256f`
 
 ---
 
